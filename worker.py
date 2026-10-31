@@ -118,7 +118,8 @@ async def agent():
 
 # ---------- discord ----------
 class W(discord.Client):
-    async def setup_hook(self): asyncio.create_task(agent())
+    def __init__(s,**k): super().__init__(**k); s.tree=discord.app_commands.CommandTree(s)
+    async def setup_hook(s): asyncio.create_task(agent()); await s.tree.sync()
 
 I=discord.Intents.default(); I.members=True
 bot=W(intents=I)
@@ -167,6 +168,8 @@ def snapshot(x_secret:str=Header()):
     if x_secret!=E["WEBHOOK_SECRET"]: raise HTTPException(401)
     asyncio.run_coroutine_threadsafe(snapshot_all(),bot.loop)
     return {"queued":True}
+
+import cmds; cmds.setup(bot,globals())
 
 if __name__=="__main__":
     threading.Thread(target=uvicorn.run,args=(app,),kwargs={"host":"0.0.0.0","port":int(E.get("PORT",10000)),"log_level":"warning"},daemon=True).start()
