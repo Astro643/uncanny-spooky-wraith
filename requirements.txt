@@ -1,0 +1,6 @@
+discord.py
+fastapi
+uvicorn
+upstash-redis
+google-genai
+cohere
